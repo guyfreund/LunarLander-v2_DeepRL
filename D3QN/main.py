@@ -39,7 +39,7 @@ graph = True
 file_type = 'tf'
 file = 'saved_networks/d3qn_model5'
 
-d3qn_agent = Agent(lr=0.00075, discount_factor=0.99, num_actions=8, epsilon=1.0, batch_size=64, input_dim=[8])
+d3qn_agent = Agent(lr=0.00075, discount_factor=0.99, num_actions=8, epsilon=1.0, batch_size=64, input_dim=[8], StopTrainingOnMeanRewardOverLastEpisodes=True)
 
 if train and not test:
     d3qn_agent.train_model(env, num_episodes, graph)

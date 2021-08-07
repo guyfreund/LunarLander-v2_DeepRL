@@ -9,6 +9,7 @@ import tensorflow.keras as keras
 from tensorflow.python.keras.layers import Dense
 from tensorflow.keras.optimizers import Adam
 
+from itertools import count
 from replay_buffer import ReplayBuffer
 
 
@@ -32,7 +33,7 @@ class DuelingDoubleDeepQNetwork(keras.Model):
 
 
 class Agent:
-    def __init__(self, lr, discount_factor, num_actions, epsilon, batch_size, input_dim):
+    def __init__(self, lr, discount_factor, num_actions, epsilon, batch_size, input_dim, StopTrainingOnMeanRewardOverLastEpisodes=False):
         self.action_space = [i for i in range(num_actions)]
         self.discount_factor = discount_factor
         self.epsilon = epsilon
@@ -46,6 +47,7 @@ class Agent:
         self.q_target_net = DuelingDoubleDeepQNetwork(num_actions, 128, 128)
         self.q_net.compile(optimizer=Adam(learning_rate=lr), loss='mse')
         self.q_target_net.compile(optimizer=Adam(learning_rate=lr), loss='mse')
+        self.StopTrainingOnMeanRewardOverLastEpisodes = StopTrainingOnMeanRewardOverLastEpisodes
 
     def store_tuple(self, state, action, reward, new_state, done):
         self.buffer.store_tuples(state, action, reward, new_state, done)
@@ -90,7 +92,11 @@ class Agent:
         f = 0
         txt = open("saved_networks.txt", "w")
 
-        for i in range(num_episodes):
+        iterator = range(num_episodes)
+        if self.StopTrainingOnMeanRewardOverLastEpisodes:
+            iterator = count(start=0, step=1)  # endless iterator over N
+
+        for i in iterator:
             done = False
             score = 0.0
             state = env.reset()
@@ -116,6 +122,10 @@ class Agent:
                                                                                                   avg_score))
                 f += 1
                 print("Network saved")
+                if self.StopTrainingOnMeanRewardOverLastEpisodes and len(avg_scores) >= 100:
+                    # end of training
+                    print(f"Reached the desired average mean reward over 100 episodes. Total episodes: {len(episodes)}, end of training.")
+                    break
 
         txt.close()
         if graph:
