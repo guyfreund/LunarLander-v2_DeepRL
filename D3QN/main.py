@@ -25,7 +25,7 @@ class DiscreteActionSpaceWrapper(gym.Wrapper):
             3: np.array([-1, 1])  # right 100%
         }[discrete_action]
 
-        obs, reward, done, info = self.envirnoment.step(continuous_action)
+        obs, reward, done, info = self.env.step(continuous_action)
         return obs, reward, done, info
 
 
