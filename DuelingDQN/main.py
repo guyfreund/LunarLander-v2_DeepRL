@@ -30,6 +30,7 @@ class DiscreteActionSpaceWrapper(gym.Wrapper):
 
 
 env = DiscreteActionSpaceWrapper(gym.make("LunarLanderContinuous-v2"))
+env.seed(2)
 spec = gym.spec("LunarLanderContinuous-v2")
 train = 1
 test = 0
