@@ -33,7 +33,7 @@ env = DiscreteActionSpaceWrapper(gym.make("LunarLanderContinuous-v2"))
 spec = gym.spec("LunarLanderContinuous-v2")
 train = 1
 test = 0
-num_episodes = 350
+num_episodes = 500
 graph = True
 
 file_type = 'tf'
