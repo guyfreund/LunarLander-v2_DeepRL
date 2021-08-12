@@ -3,6 +3,7 @@
 from agent import Agent
 import numpy as np
 import gym
+import argparse
 
 
 class DiscreteActionSpaceWrapper(gym.Wrapper):
@@ -29,20 +30,24 @@ class DiscreteActionSpaceWrapper(gym.Wrapper):
         return obs, reward, done, info
 
 
+parser = argparse.ArgumentParser(description='wow')
+parser.add_argument('--train', help='wow', default=0, required=True)
+args = parser.parse_args()
+
+
 env = DiscreteActionSpaceWrapper(gym.make("LunarLanderContinuous-v2"))
-env.seed(2)
 spec = gym.spec("LunarLanderContinuous-v2")
-train = 1
-test = 0
+train = int(args.train)
+test = 1 - train
 num_episodes = 350
 graph = True
 
 file_type = 'tf'
-file = 'saved_networks/d3qn_model5'
+file = 'saved_networks/d3qn_8_model5'
 
 d3qn_agent = Agent(lr=0.00075, discount_factor=0.99, num_actions=8, epsilon=1.0, batch_size=64, input_dim=[8], StopTrainingOnMeanRewardOverLastEpisodes=True)
 
 if train and not test:
     d3qn_agent.train_model(env, num_episodes, graph)
 else:
-    d3qn_agent.test(env, num_episodes, file_type, file, graph)
+    d3qn_agent.test(env, 100, file_type, file, graph)
