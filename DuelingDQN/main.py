@@ -3,6 +3,7 @@
 from agent import Agent
 import numpy as np
 import gym
+import argparse
 
 
 class DiscreteActionSpaceWrapper(gym.Wrapper):
@@ -29,19 +30,24 @@ class DiscreteActionSpaceWrapper(gym.Wrapper):
         return obs, reward, done, info
 
 
+parser = argparse.ArgumentParser(description='wow')
+parser.add_argument('--train', help='wow', default=0, required=True)
+args = parser.parse_args()
+
+
 env = DiscreteActionSpaceWrapper(gym.make("LunarLanderContinuous-v2"))
 spec = gym.spec("LunarLanderContinuous-v2")
-train = 1
-test = 0
+train = int(args.train)
+test = 1 - train
 num_episodes = 500
 graph = True
 
 file_type = 'tf'
-file = 'saved_networks/duelingdqn_model123'
+file = 'saved_networks/duelingdqn_4_model123'
 
 duelingdqn_agent = Agent(lr=0.00075, discount_factor=0.99, num_actions=4, epsilon=1.0, batch_size=64, input_dim=[8])
 
 if train and not test:
     duelingdqn_agent.train_model(env, num_episodes, graph)
 else:
-    duelingdqn_agent.test(env, num_episodes, file_type, file, graph)
+    duelingdqn_agent.test(env, 100, file_type, file, graph)

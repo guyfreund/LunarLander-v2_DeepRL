@@ -144,7 +144,7 @@ class Agent:
             done = False
             episode_score = 0.0
             while not done:
-                env.render()
+                # env.render()
                 action = self.policy(state)
                 new_state, reward, done, _ = env.step(action)
                 episode_score += reward
